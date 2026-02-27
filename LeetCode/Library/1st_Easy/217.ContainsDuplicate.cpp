@@ -1,35 +1,33 @@
 /*
-1. 두 수의 합 찾기
-정수 배열 nums와 정수 target이 주어졌을 때, 두 수의 합이 target이 되는 두 수의 인덱스를 반환하세요.
+217. 중복 포함 여부
 
-각 입력에는 정확히 하나의 해답만 존재하며, 동일한 요소를 두 번 사용할 수 없습니다.
-반환 순서는 상관없습니다.
+정수 배열 nums가 주어졌을 때, 어떤 값이든 배열에 두 번 이상 나타나면 true를, 모든 요소가 서로 다르면 false를 반환합니다.
 
 예시 1:
-입력: nums = [2, 7, 11, 15], target = 9
-출력: [0, 1]
-설명: nums[0] + nums[1] == 9이므로 [0, 1]을 반환합니다.
+입력: nums = [1,2,3,1]
+출력: true
+설명:
+요소 1은 인덱스 0과 3에 나타납니다.
 
-예제 2:
-입력: nums = [3,2,4], 목표값 = 6
-출력: [1,2]
+예시 2:
+입력: nums = [1,2,3,4]
+출력: false
+설명:
+모든 요소가 서로 다릅니다.
 
-예제 3:
-입력: nums = [3,3], 목표값 = 6
-출력: [0,1]
+예시 3:
+입력: nums = [1,1,1,3,3,4,3,2,4,2]
+출력: true
 
 제약 조건:
-2 <= nums.length <= 104
+1 <= nums.length <= 105
 -109 <= nums[i] <= 109
--109 <= target <= 109
-유효한 답은 하나뿐입니다.
 
-추가 질문: 시간 복잡도가 O(n²)보다 작은 알고리즘을 제시할 수 있습니까?
-채택됨
-20,818,420/36.5M
-채택률
-57.1%
+이 문제를 실제 면접에서 본 적이 있나요?
+
+승인된 신청서 6,152,542건/960만 건, 승인율 64.1%
 */
+
 // ============================================================
 // Competitive Programming Template (MSVC / cl.exe 전용)
 // ============================================================
@@ -54,6 +52,11 @@ using namespace std;
 template<typename T>
 void debug(const T& value) {
     cout << value << "\n";
+}
+
+// bool
+void debug(const bool& value) {
+    cout << (value ? "true" : "false") << "\n";
 }
 
 // pair
@@ -93,43 +96,46 @@ void debug(const unordered_map<K,V>& m) {
 // 🧠 Solution 영역
 // ============================================================
 
+/*
+아래처럼 이중 for문을 사용하면 시간복잡도가 O(n²)가 되어 TLE(Time Limit Exceed) 결과 나옴
+
 class Solution {
 public:
-    vector<int> twoSum(vector<int>& nums, int target)
-    {
+    bool containsDuplicate(vector<int>& nums) {
+        int chk_dup = 0;
+        bool is_dup = false;        
         for (int i = 0; i < nums.size(); ++i)
         {
+            chk_dup = nums[i];
+            
             for (int j = i + 1; j < nums.size(); ++j)
             {
-                if (nums[i] + nums[j] == target)
-                {
-                    return { i, j };
-                }
+                if (chk_dup == nums[j])
+                    is_dup = true;
             }
         }
 
-        return {};
+        return is_dup;
     }
+};
+*/
 
-    // O(n2)
-    /*
-    vector<int> twoSum(vector<int>& nums, int target)
-    {
-        unordered_map<int,int> m;
+class Solution {
+public:
+    bool containsDuplicate(vector<int>& nums) {
 
-        for (int i = 0; i < nums.size(); ++i)
-        {
-            int need = target - nums[i];
+        unordered_set<int> seen;                    // unordered_set 사용: O(n²) -> O(n)
 
-            if (m.count(need))
-                return { m[need], i };
-
-            m[nums[i]] = i;
+        for (int num : nums) {            
+            if (seen.find(num) != seen.end()) {     // 이미 본 숫자라면
+                return true;                        // 중복 발견 즉시 종료
+            }
+            
+            seen.insert(num);                       // 처음 보는 숫자라면 저장
         }
 
-        return {};
+        return false;  // 끝까지 중복 없으면 false
     }
-    */
 };
 
 // ============================================================
@@ -142,10 +148,9 @@ int main()
 
     Solution sol;
 
-    vector<int> nums = {2,7,11,15};
-    int target = 9;
-
-    vector<int> result = sol.twoSum(nums, target);
+    vector<int> nums = {1,2,3,4};
+    
+    auto result = sol.containsDuplicate(nums);
 
     dbg(result);
 
